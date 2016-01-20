@@ -1053,7 +1053,11 @@ void jpeg_decoder::read_sof_marker()
   m_image_x_size = get_bits(16);
 
   if ((m_image_x_size < 1) || (m_image_x_size > JPGD_MAX_WIDTH))
-    stop_decoding(JPGD_BAD_WIDTH);
+  {
+	  printf("m_image_x_size: %d\n", m_image_x_size);
+stop_decoding(JPGD_BAD_WIDTH);
+  }
+    
 
   m_comps_in_frame = get_bits(8);
 
@@ -3069,8 +3073,11 @@ unsigned char *decompress_jpeg_image_from_stream(jpeg_decoder_stream *pStream, i
     return NULL;
 
   jpeg_decoder decoder(pStream);
-  if (decoder.get_error_code() != JPGD_SUCCESS)
+  if (decoder.get_error_code() != JPGD_SUCCESS){
+	  //printf("ERROR ! %d\n", decoder.get_error_code());
     return NULL;
+
+  }
 
   const int image_width = decoder.get_width(), image_height = decoder.get_height();
   *width = image_width;

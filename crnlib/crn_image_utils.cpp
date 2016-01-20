@@ -24,7 +24,7 @@
 namespace crnlib
 {
    const float cInfinitePSNR = 999999.0f;
-   const uint CRNLIB_LARGEST_SUPPORTED_IMAGE_DIMENSION = 16384;
+   const uint CRNLIB_LARGEST_SUPPORTED_IMAGE_DIMENSION = 18432;
 
    namespace image_utils
    {
@@ -81,15 +81,17 @@ namespace crnlib
       }
 
       bool read_from_stream_jpgd(data_stream_serializer &serializer, image_u8& img)
-      {
+	  {
          uint8_vec buf;
          if (!serializer.read_entire_file(buf))
             return false;
 
          int width = 0, height = 0, actual_comps = 0;
          unsigned char *pSrc_img = jpgd::decompress_jpeg_image_from_memory(buf.get_ptr(), buf.size_in_bytes(), &width, &height, &actual_comps, 4);
-         if (!pSrc_img)
-            return false;
+
+		 if (!pSrc_img){
+			return false;
+		 }
 
          if (math::maximum(width, height) > (int)CRNLIB_LARGEST_SUPPORTED_IMAGE_DIMENSION)
          {
@@ -102,6 +104,7 @@ namespace crnlib
             crnlib_free(pSrc_img);
             return false;
          }
+		 //console::message("\n debug\n");
 
          img.reset_comp_flags();
          img.set_grayscale(actual_comps == 1);
